@@ -53,16 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // This is what happens when a user hits the enter key
-    function evaluateEnteredWord() {
-
-    }
-
-    // This is what happens when a user hits the delete key
-    function evaluateDeletedLEtter() {
-
-    }
-
     // This pulls the array for the currentGuessedWords so it can be updated
     function getCurrentGuessedWords() {
         var numGuessedWords = guessedWords.length;
@@ -85,6 +75,25 @@ document.addEventListener("DOMContentLoaded", () => {
             freeSpaceID.textContent = keypad_key;
         }
     }
+
+    // This is what happens when a user hits the enter key
+    function evaluateEnteredWord() {
+
+    }
+
+    // This is what happens when a user hits the delete key
+    function evaluateDeletedLetter() {
+        var currentGuesses = getCurrentGuessedWords();
+        var delLetter = currentGuesses.pop();
+
+        guessedWords[guessedWords.length - 1] = currentGuesses;
+
+        var freeSpaceID = document.getElementById(String(freeSpace - 1));
+
+        freeSpaceID.textContent = '';
+        freeSpace = freeSpace - 1;
+
+    }
     
     // THIS is what happens when a user hits a key on the keyboard
     // This variable pulls the data from the HTML keyboard
@@ -96,14 +105,21 @@ document.addEventListener("DOMContentLoaded", () => {
         keypad_keys[i].onclick = ({ target }) => {
             var keypad_key = target.getAttribute("data-key");
 
-            evaluateGuessedWords(keypad_key); // Stores the letter in an array
-            console.log(keypad_key); // Testing purposes, remove later.
-
             // When they hit enter
             if (keypad_key === 'enter') {
                 evaluateEnteredWord();
                 return;
             }
+
+            // When they hit delete
+            if (keypad_key === 'del') {
+                evaluateDeletedLetter();
+                return;
+            }
+
+            // Updates the array - must be kept below the If Statements, otherwise the functions don't work
+            evaluateGuessedWords(keypad_key); // Stores the letter in an array
+            console.log(keypad_key); // Testing purposes, remove later.
         }
     }
 })
