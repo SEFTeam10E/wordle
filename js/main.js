@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Run setup functions
         gridDraw(); // draw the grid
-        //instructions(); // show the instructions - further implementation could be put it to only show this to first time players
-        //alert("Welcome to WORDLE");
+        // Instructions(); // show the instructions - further implementation could be put it to only show this to first time players
+        // alert("Welcome to WORDLE");
 
         // Array for storing guessed words
         guessedWords = [[]];
