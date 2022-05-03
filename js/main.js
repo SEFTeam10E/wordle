@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This is what happens when a user hits the enter key
   function evaluateEnteredWord() {
-    if ((freeSpace - 1) % 5 == 0) {
+    if ((freeSpace - 1) % 5 == 0 && (freeSpace - 1) >= (5 * guessIndex)) {
       // TODO: Validate english word
       // TODO: Create letters status
       guessIndex++;
