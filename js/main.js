@@ -83,10 +83,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This is what happens when a user hits the enter key
   function evaluateEnteredWord() {
+    var currentGuess = getCurrentGuessedWords();
     if ((freeSpace - 1) % 5 == 0 && (freeSpace - 1) >= (5 * guessIndex)) {
-      // TODO: Validate english word
-      // TODO: Create letters status
-      guessIndex++;
+      if (true) { // TODO: Validate english word
+        for (let i = 0; i < 5; i++) {
+          // Square IDs, may be helpful for coloring/styling, please after styling is finished.
+          console.log(((guessIndex - 1) * 5) + i);
+          if (currentGuess[i] == word[i]) { // Correct word
+            // TODO: Colour the tile green 
+          } else if (word[i].includes(currentGuess[i])) { // Wrong position
+            // TODO: Colour the tile yellow 
+          } else { // Wrong word
+            // TODO: Colour the tile grey
+          }
+        }
+        guessIndex++;
+      }
     }
   }
 
