@@ -4,6 +4,18 @@
     Authors: Team 10E Development Team
 */
 
+// These do not go in the eventListener - can be commented out or removed for Sprint submission
+function toggleInstructions() {
+    var instructions = document.getElementById("instructions");
+    
+    if (instructions.style.visibility==="hidden") {
+        instructions.style.visibility="visible";
+    }
+    else {
+        instructions.style.visibility="hidden";
+    }
+}
+
 // Load JavaScript on Page Load
 document.addEventListener("DOMContentLoaded", () => {
     // Variables for site-wide use
@@ -16,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialise the game
     gameInit();
 
-
     // Setup function
     function gameInit() {
         var word = "proud" // hard coded for testing, needs to change in Sprint 2
@@ -27,20 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Run setup functions
         gridDraw(); // draw the grid
-        //instructions(); // show the instructions - further implementation could be put it to only show this to first time players
-        //alert("Welcome to WORDLE");
 
         // Array for storing guessed words
         guessedWords = [[]];
 
         // Available space variable - starts at 1 for init
         freeSpace = 1;
-    }
-
-    /* Trying to see if we can get a pop-up, will try and fix later */
-    function instructions() {
-        document.getElementById("game").style.display="block";
-        document.getElementById("instructions").style.display="none";
     }
 
     // Draw grid function - Uses a loop to draw the squares instead of hard coding them in HTML

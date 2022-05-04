@@ -12,14 +12,15 @@
     <script src="js/main.js"></script>
 </head>
 <body>
+    <!-- COMMENT THIS LINE OUT TO REMOVE INSTRUCTIONS -->
+    <img src="img/instruction.png" class="instructions-image" id="instructions" onClick="toggleInstructions()">
+
+    <!-- Sprint 1 and Gameplay -->
     <div id="container">
-        <!-- <div id="instructions">
-            <img src="img/instruction.png">
-        </div> -->
         <div id="game">
             <!-- HEADING -->
             <header>
-                <h1 class="title">WORDLE</h1>
+                <h1 class="title" onClick="toggleInstructions()">WORDLE</h1>
                 <hr>
             </header>
 

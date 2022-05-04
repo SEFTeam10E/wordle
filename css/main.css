@@ -4,6 +4,14 @@
     Authors: Team 10E Development Team
 */
 
+/* 0.0 INSTRUCTIONS - NOT PART OF SPRINT 1 */
+.instructions-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 /* 1.0 BASIC PAGE SETUP AND MOBILE PAGE FUNCTIONALITY */
 * {
     margin: 0;
