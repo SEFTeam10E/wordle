@@ -5,6 +5,7 @@
 */
 
 // These do not go in the eventListener - can be commented out or removed for Sprint submission
+// For the sake of our submission, this won't run
 function toggleInstructions() {
     var instructions = document.getElementById("instructions");
     
@@ -174,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Updates the array - must be kept below the If Statements, otherwise the functions don't work
             evaluateGuessedWords(keypad_key); // Stores the letter in an array
-            console.log(keypad_key); // Testing purposes, remove later.
+            //console.log(keypad_key); // Testing purposes, remove later.
         }
     }
 })
