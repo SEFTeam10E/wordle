@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let word = "proud"; // hard coded for testing, needs to change in Sprint 2
   let guessedWordCount = 0;
   let isGameEnd = false;
+  let isAnimating = false
 
 
   // Initialise the game
@@ -119,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       //Changing square colors using getBoxColor function
       let firstLetterId = guessedWordCount * 5 + 1;
+      isAnimating = true
       for (let index = 0; index < currentguessedWordArr.length; index++) {
         let letter = currentguessedWordArr[index];
         let squareColor = getSquareColor(letter, index);
@@ -127,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
         await delay(200)
       }
+      isAnimating = false
 
 
       guessedWordCount += 1;
@@ -147,9 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This is what happens when a user hits the delete key
   function evaluateDeletedLetter() {
+    // Do not allow delete when the animation is being displayed (disable delete when full)
+    if (isAnimating) return;
     let currentGuesses = getCurrentGuessedWords();
     if (currentGuesses.length - 1 >= 0) {
-      let delLetter = currentGuesses.pop();
+      currentGuesses.pop();
 
       guessedWords[guessedWords.length - 1] = currentGuesses;
 
