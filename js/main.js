@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let freeSpace;
   let word = "proud"; // hard coded for testing, needs to change in Sprint 2
   let guessedWordCount = 0;
+  let isGameEnd = false;
+  let isAnimating = false
 
 
   // Initialise the game
@@ -113,12 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Alert if word less than 5
     if (currentguessedWordArr.length !== 5) {
       window.alert("Word Must be 5 Letters");
-    }
-    else {
+    } else {
       let currentGuesses = currentguessedWordArr.join("");
 
       //Changing square colors using getBoxColor function
       let firstLetterId = guessedWordCount * 5 + 1;
+      isAnimating = true
       for (let index = 0; index < currentguessedWordArr.length; index++) {
         let letter = currentguessedWordArr[index];
         let squareColor = getSquareColor(letter, index);
@@ -127,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
         await delay(200)
       }
+      isAnimating = false
 
 
       guessedWordCount += 1;
@@ -134,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Congratulation message if correct guess
       if (currentGuesses === word) {
         window.alert("Congratulations! You have won the wordle for today");
+        isGameEnd = true;
       }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
@@ -146,16 +150,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This is what happens when a user hits the delete key
   function evaluateDeletedLetter() {
+    // Do not allow delete when the animation is being displayed (disable delete when full)
+    if (isAnimating) return;
     let currentGuesses = getCurrentGuessedWords();
-    let delLetter = currentGuesses.pop();
+    if (currentGuesses.length - 1 >= 0) {
+      currentGuesses.pop();
 
-    guessedWords[guessedWords.length - 1] = currentGuesses;
+      guessedWords[guessedWords.length - 1] = currentGuesses;
 
-    let freeSpaceID = document.getElementById(String(freeSpace - 1));
+      let freeSpaceID = document.getElementById(String(freeSpace - 1));
 
-    freeSpaceID.textContent = '';
-    freeSpace = freeSpace - 1;
-
+      freeSpaceID.textContent = '';
+      freeSpace = freeSpace - 1;
+    }
   }
 
   // THIS is what happens when a user hits a key on the keyboard
@@ -166,23 +173,26 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < keypad_keys.length; i++) {
     // When the key is clicked, it pulls the data (i.e. the letter)
     keypad_keys[i].onclick = ({ target }) => {
-      let keypad_key = target.getAttribute("data-key");
 
-      // When they hit enter
-      if (keypad_key === 'enter') {
-        evaluateEnteredWord();
-        return;
+      if (!isGameEnd) {
+        let keypad_key = target.getAttribute("data-key");
+
+        // When they hit enter
+        if (keypad_key === 'enter') {
+          evaluateEnteredWord();
+          return;
+        }
+
+        // When they hit delete
+        if (keypad_key === 'del') {
+          evaluateDeletedLetter();
+          return;
+        }
+
+        // Updates the array - must be kept below the If Statements, otherwise the functions don't work
+        evaluateGuessedWords(keypad_key); // Stores the letter in an array
+        //console.log(keypad_key); // Testing purposes, remove later.
       }
-
-      // When they hit delete
-      if (keypad_key === 'del') {
-        evaluateDeletedLetter();
-        return;
-      }
-
-      // Updates the array - must be kept below the If Statements, otherwise the functions don't work
-      evaluateGuessedWords(keypad_key); // Stores the letter in an array
-      //console.log(keypad_key); // Testing purposes, remove later.
     }
   }
 })
