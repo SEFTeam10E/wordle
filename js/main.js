@@ -7,7 +7,7 @@
 // These do not go in the eventListener - can be commented out or removed for Sprint submission
 // For the sake of our submission, this won't run
 function toggleInstructions() {
-  let instructions = document.getElementById("instructions");
+  let instructions = document.querySelector("#instructions");
 
   if (instructions.style.visibility === "hidden") {
     instructions.style.visibility = "visible";
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // variables for site-wide use
   let guessedWords;
   let freeSpace;
-  let word = "proud";
+  let word = "proud"; // hard coded for testing, needs to change in Sprint 2
   let guessedWordCount = 0;
 
 
@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Setup function
   function gameInit() {
-    let word = "proud" // hard coded for testing, needs to change in Sprint 2
     // hard coded tile colours - for Sprint 2, will need changing for colour schemes
     //let correctPosition = rgb(83, 141, 78);
     //let incorrectLetter = rgb(58, 58, 60);
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Draw grid function - Uses a loop to draw the squares instead of hard coding them in HTML
   function gridDraw() {
-    let grid = document.getElementById("grid")
+    let grid = document.querySelector("#grid")
 
     // Runs until counter = 30, meaning it draws 30 squares, five per guess
     for (let index = 0; index < 30; index++) {
@@ -100,8 +99,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return "rgb(255, 209, 102)";
   }
 
+  function delay(ms) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(2);
+      }, ms);
+    });
+  }
+
   // This is what happens when a user hits the enter key
-  function evaluateEnteredWord() {
+  async function evaluateEnteredWord() {
     let currentguessedWordArr = getCurrentGuessedWords();
     // Alert if word less than 5
     if (currentguessedWordArr.length !== 5) {
@@ -112,15 +119,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       //Changing square colors using getBoxColor function
       let firstLetterId = guessedWordCount * 5 + 1;
-      let interval = 200;
-      currentguessedWordArr.forEach((letter, index) => {
-        setTimeout(() => {
-          let squareColor = getSquareColor(letter, index);
-          let letterId = firstLetterId + index;
-          let letterEl = document.getElementById(letterId);
-          letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
-        }, interval * index);
-      });
+      for (let index = 0; index < currentguessedWordArr.length; index++) {
+        let letter = currentguessedWordArr[index];
+        let squareColor = getSquareColor(letter, index);
+        let letterId = firstLetterId + index;
+        let letterEl = document.getElementById(letterId);
+        letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
+        await delay(200)
+      }
+
 
       guessedWordCount += 1;
 
