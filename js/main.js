@@ -1,198 +1,159 @@
 /*
-    CSS FILE FOR TEAM 10E WORDLE
+    Main.js
     Date: 28/04/2022
     Authors: Team 10E Development Team
 */
 
-// These do not go in the eventListener - can be commented out or removed for Sprint submission
-// For the sake of our submission, this won't run
-function toggleInstructions() {
-  let instructions = document.querySelector("#instructions");
+// Draw grid as much as numOfRow
+const drawGrid = (numOfRow) => {
+  let gridElement = document.querySelector("#grid")
 
-  if (instructions.style.visibility === "hidden") {
-    instructions.style.visibility = "visible";
-  }
-  else {
-    instructions.style.visibility = "hidden";
+  for (let index = 0; index < numOfRow * 5; index++) {
+    let gridCubeElement = document.createElement("div");
+    // Add class to element to add styles
+    gridCubeElement.classList.add("square");
+    // Set element ID to identify it on the input
+    gridCubeElement.setAttribute("id", index);
+    gridElement.appendChild(gridCubeElement);
   }
 }
 
-// Load JavaScript on Page Load
-document.addEventListener("DOMContentLoaded", () => {
-  // variables for site-wide use
-  let guessedWords;
-  let freeSpace;
-  let word = "proud"; // hard coded for testing, needs to change in Sprint 2
+const getCurrentlyGuessedWord = (guessedWords) => guessedWords[guessedWords.length - 1];
+
+const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(2), ms))
+
+// Get color depending on the correctness of the guess
+const getColor = (letter, index, word) => {
+  // TODO: on sprint 2 add functionalities to change color here
+  if (letter === word[index]) return "rgb(6, 214, 160)";
+  if (word.includes(letter)) return "rgb(255, 209, 102)";
+  return "rgb(180, 180, 180)";
+}
+
+
+// FIXME: This function contains side-effect and may effect future implementation
+// Handles the output onto the board as well as storing guessed letters in an array
+const evaluateGuessedWords = (keypadKey, guessedWords, freeSpace) => {
+  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  if (currentGuess && currentGuess.length < 5) {
+    // FIXME: SIDE EFFECT
+    // Pass by reference (refering to guessedword internal array)
+    currentGuess.push(keypadKey);
+    // Determines the space for the letter to go in the array and board
+    let freeSpaceIDElement = document.getElementById(String(freeSpace));
+    // Increase counter as output letters increase
+    freeSpace += 1;
+    // Output the letter to the board
+    freeSpaceIDElement.textContent = keypadKey;
+  }
+  return freeSpace
+}
+
+// FIXME: This function contains side-effect and may effect future implementation
+const evaluateDeletedLetter = (isAnimating, guessedWords, freeSpace) => {
+  // Do not allow delete when the animation is being displayed (disable delete when full)
+  if (isAnimating) return;
+
+  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  if (currentGuess.length - 1 >= 0) {
+    // FIXME: SIDE EFFECT
+    currentGuess.pop();
+
+    guessedWords[guessedWords.length - 1] = currentGuess;
+
+    let freeSpaceIDElement = document.getElementById(String(freeSpace - 1));
+
+    freeSpaceIDElement.textContent = '';
+    freeSpace--;
+  }
+
+  return freeSpace;
+}
+
+// FIXME: This function contains side-effect and may effect future implementation
+async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCountUpdater, guessedWords, guessedWordCount) {
+  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  // Letter inputed is not upto guessing length
+  if (currentGuess.length !== 5) {
+    window.alert("Word Must be 5 Letters");
+  } else {
+    // FIXME: SIDE EFFECT
+    let currentGuesses = currentGuess.join("");
+
+    //Changing square colors using getBoxColor function
+    let firstLetterId = guessedWordCount * 5;
+    animationStateUpdater(true)
+    for (let index = 0; index < currentGuess.length; index++) {
+      let letter = currentGuess[index];
+      let squareColor = getColor(letter, index, word);
+      let letterId = firstLetterId + index;
+      let letterEl = document.getElementById(letterId);
+      letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
+      await delay(200)
+    }
+    animationStateUpdater(false)
+
+    // guessedWordCount += 1;
+    guessedWordCountUpdater()
+
+    // Congratulation message if correct guess
+    if (currentGuesses === word) {
+      window.alert("Congratulations! You have won the wordle for today");
+      isGameEnd = true;
+    }
+    // More than 6 wrong guesses
+    else if (guessedWords.length === 6) {
+      window.alert(`You Lose! The word for today is ${word}.`);
+    }
+
+    // FIXME: SIDE EFFECT
+    guessedWords.push([]);
+  }
+}
+
+
+const main = () => {
+  // 2D array containing all guessed word
+  let guessedWords = [[]];
+  // Free space state corresponds to the grid id
+  let freeSpace = 0;
+  // TODO: Change me to dynamic content in sprint 2
+  let word = "proud";
   let guessedWordCount = 0;
   let isGameEnd = false;
   let isAnimating = false
 
+  // Draw the grid
+  drawGrid(6)
 
-  // Initialise the game
-  gameInit();
+  const updateAnimationState = (state) => isAnimating = state
+  const incrementGuessedWordCount = () => guessedWordCount++
 
-  // Setup function
-  function gameInit() {
-    // hard coded tile colours - for Sprint 2, will need changing for colour schemes
-    //let correctPosition = rgb(83, 141, 78);
-    //let incorrectLetter = rgb(58, 58, 60);
-    //let incorrectPosition = rgb(181, 159, 59);
+  // Get all keybords element and add event listener
+  let keypadKeysElements = document.querySelectorAll(".keypad-row button");
 
-    // Run setup functions
-    gridDraw(); // draw the grid
-
-    // Array for storing guessed words
-    guessedWords = [[]];
-
-    // Available space letiable - starts at 1 for init
-    freeSpace = 1;
-  }
-
-  // Draw grid function - Uses a loop to draw the squares instead of hard coding them in HTML
-  function gridDraw() {
-    let grid = document.querySelector("#grid")
-
-    // Runs until counter = 30, meaning it draws 30 squares, five per guess
-    for (let index = 0; index < 30; index++) {
-      let gridCube = document.createElement("div");
-      gridCube.classList.add("square");
-      gridCube.setAttribute("id", index + 1); // Each square gets an attribute which helps for inputting the letter with the keyboard
-      grid.appendChild(gridCube);
-    }
-  }
-
-  // This pulls the array for the currentGuessedWords so it can be updated
-  function getCurrentGuessedWords() {
-    let numGuessedWords = guessedWords.length;
-    return guessedWords[numGuessedWords - 1];
-  }
-
-  // Handles the output onto the board as well as storing guessed letters in an array
-  function evaluateGuessedWords(keypad_key) {
-    let guessedWordArr = getCurrentGuessedWords();
-
-    if (guessedWordArr && guessedWordArr.length < 5) {
-      guessedWordArr.push(keypad_key);
-
-      // Determines the space for the letter to go in the array and board
-      let freeSpaceID = document.getElementById(String(freeSpace));
-      // Increase counter as output letters increase
-      freeSpace += 1;
-
-      // Output the letter to the board
-      freeSpaceID.textContent = keypad_key;
-    }
-  }
-  // Changing square color green, orange, gray.
-  function getSquareColor(letter, index) {
-    let correctLetter = word.includes(letter);
-
-    let letterIndex = word.charAt(index);
-    let correctPosition = (letter === letterIndex);
-    //Incorrect letter color gray
-    if (!correctLetter) {
-      return "rgb(180, 180, 180)";
-    }
-    //Correct letter color green
-    if (correctPosition) {
-      return "rgb(6, 214, 160)";
-    }
-    //Correct letter but incorrect position orange
-    return "rgb(255, 209, 102)";
-  }
-
-  function delay(ms) {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve(2);
-      }, ms);
-    });
-  }
-
-  // This is what happens when a user hits the enter key
-  async function evaluateEnteredWord() {
-    let currentguessedWordArr = getCurrentGuessedWords();
-    // Alert if word less than 5
-    if (currentguessedWordArr.length !== 5) {
-      window.alert("Word Must be 5 Letters");
-    } else {
-      let currentGuesses = currentguessedWordArr.join("");
-
-      //Changing square colors using getBoxColor function
-      let firstLetterId = guessedWordCount * 5 + 1;
-      isAnimating = true
-      for (let index = 0; index < currentguessedWordArr.length; index++) {
-        let letter = currentguessedWordArr[index];
-        let squareColor = getSquareColor(letter, index);
-        let letterId = firstLetterId + index;
-        let letterEl = document.getElementById(letterId);
-        letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
-        await delay(200)
-      }
-      isAnimating = false
-
-
-      guessedWordCount += 1;
-
-      // Congratulation message if correct guess
-      if (currentGuesses === word) {
-        window.alert("Congratulations! You have won the wordle for today");
-        isGameEnd = true;
-      }
-      // More than 6 wrong guesses
-      else if (guessedWords.length === 6) {
-        window.alert(`You Lose! The word for today is ${word}.`);
-      }
-
-      guessedWords.push([]);
-    }
-  }
-
-  // This is what happens when a user hits the delete key
-  function evaluateDeletedLetter() {
-    // Do not allow delete when the animation is being displayed (disable delete when full)
-    if (isAnimating) return;
-    let currentGuesses = getCurrentGuessedWords();
-    if (currentGuesses.length - 1 >= 0) {
-      currentGuesses.pop();
-
-      guessedWords[guessedWords.length - 1] = currentGuesses;
-
-      let freeSpaceID = document.getElementById(String(freeSpace - 1));
-
-      freeSpaceID.textContent = '';
-      freeSpace = freeSpace - 1;
-    }
-  }
-
-  // THIS is what happens when a user hits a key on the keyboard
-  // This letiable pulls the data from the HTML keyboard
-  let keypad_keys = document.querySelectorAll(".keypad-row button");
-
-  // This loop handles what happens when a button is clicked
-  for (let i = 0; i < keypad_keys.length; i++) {
-    // When the key is clicked, it pulls the data (i.e. the letter)
-    keypad_keys[i].onclick = ({ target }) => {
-
+  for (const keypadKeyElementInstance of keypadKeysElements) {
+    // Get the clicked key and destructure the target (the letter pressed)
+    keypadKeyElementInstance.onclick = ({ target }) => {
       if (!isGameEnd) {
-        let keypad_key = target.getAttribute("data-key");
+        let keypadKey = target.getAttribute("data-key");
 
-        // When they hit enter
-        if (keypad_key === 'enter') {
-          evaluateEnteredWord();
+        if (keypadKey === 'enter') {
+          evaluateEnteredWord(word, updateAnimationState, incrementGuessedWordCount, guessedWords, guessedWordCount);
           return;
         }
 
-        // When they hit delete
-        if (keypad_key === 'del') {
-          evaluateDeletedLetter();
+        if (keypadKey === 'del') {
+          evaluateDeletedLetter(isAnimating, guessedWords, freeSpace);
           return;
         }
-
-        // Updates the array - must be kept below the If Statements, otherwise the functions don't work
-        evaluateGuessedWords(keypad_key); // Stores the letter in an array
-        //console.log(keypad_key); // Testing purposes, remove later.
+        // Update guessworrds array
+        freeSpace = evaluateGuessedWords(keypadKey, guessedWords, freeSpace);
       }
     }
   }
-})
+
+}
+
+// Run function after page initialized
+document.addEventListener("DOMContentLoaded", main)
