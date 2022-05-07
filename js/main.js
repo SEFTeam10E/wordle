@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let freeSpace;
   let word = "proud"; // hard coded for testing, needs to change in Sprint 2
   let guessedWordCount = 0;
+  let isGameEnd = false;
 
 
   // Initialise the game
@@ -133,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Congratulation message if correct guess
       if (currentGuesses === word) {
         window.alert("Congratulations! You have won the wordle for today");
+        isGameEnd = true;
       }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
@@ -166,23 +168,26 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < keypad_keys.length; i++) {
     // When the key is clicked, it pulls the data (i.e. the letter)
     keypad_keys[i].onclick = ({ target }) => {
-      let keypad_key = target.getAttribute("data-key");
 
-      // When they hit enter
-      if (keypad_key === 'enter') {
-        evaluateEnteredWord();
-        return;
+      if (!isGameEnd) {
+        let keypad_key = target.getAttribute("data-key");
+
+        // When they hit enter
+        if (keypad_key === 'enter') {
+          evaluateEnteredWord();
+          return;
+        }
+
+        // When they hit delete
+        if (keypad_key === 'del') {
+          evaluateDeletedLetter();
+          return;
+        }
+
+        // Updates the array - must be kept below the If Statements, otherwise the functions don't work
+        evaluateGuessedWords(keypad_key); // Stores the letter in an array
+        //console.log(keypad_key); // Testing purposes, remove later.
       }
-
-      // When they hit delete
-      if (keypad_key === 'del') {
-        evaluateDeletedLetter();
-        return;
-      }
-
-      // Updates the array - must be kept below the If Statements, otherwise the functions don't work
-      evaluateGuessedWords(keypad_key); // Stores the letter in an array
-      //console.log(keypad_key); // Testing purposes, remove later.
     }
   }
 })
