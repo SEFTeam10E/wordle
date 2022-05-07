@@ -7,7 +7,7 @@
 // These do not go in the eventListener - can be commented out or removed for Sprint submission
 // For the sake of our submission, this won't run
 function toggleInstructions() {
-  var instructions = document.getElementById("instructions");
+  let instructions = document.querySelector("#instructions");
 
   if (instructions.style.visibility === "hidden") {
     instructions.style.visibility = "visible";
@@ -19,11 +19,11 @@ function toggleInstructions() {
 
 // Load JavaScript on Page Load
 document.addEventListener("DOMContentLoaded", () => {
-  // Variables for site-wide use
-  var guessedWords;
-  var freeSpace;
-  var word = "proud";
-  var guessedWordCount = 0;
+  // variables for site-wide use
+  let guessedWords;
+  let freeSpace;
+  let word = "proud"; // hard coded for testing, needs to change in Sprint 2
+  let guessedWordCount = 0;
 
 
   // Initialise the game
@@ -31,11 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Setup function
   function gameInit() {
-    var word = "proud" // hard coded for testing, needs to change in Sprint 2
     // hard coded tile colours - for Sprint 2, will need changing for colour schemes
-    //var correctPosition = rgb(83, 141, 78);
-    //var incorrectLetter = rgb(58, 58, 60);
-    //var incorrectPosition = rgb(181, 159, 59);
+    //let correctPosition = rgb(83, 141, 78);
+    //let incorrectLetter = rgb(58, 58, 60);
+    //let incorrectPosition = rgb(181, 159, 59);
 
     // Run setup functions
     gridDraw(); // draw the grid
@@ -43,13 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Array for storing guessed words
     guessedWords = [[]];
 
-    // Available space variable - starts at 1 for init
+    // Available space letiable - starts at 1 for init
     freeSpace = 1;
   }
 
   // Draw grid function - Uses a loop to draw the squares instead of hard coding them in HTML
   function gridDraw() {
-    var grid = document.getElementById("grid")
+    let grid = document.querySelector("#grid")
 
     // Runs until counter = 30, meaning it draws 30 squares, five per guess
     for (let index = 0; index < 30; index++) {
@@ -62,19 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This pulls the array for the currentGuessedWords so it can be updated
   function getCurrentGuessedWords() {
-    var numGuessedWords = guessedWords.length;
+    let numGuessedWords = guessedWords.length;
     return guessedWords[numGuessedWords - 1];
   }
 
   // Handles the output onto the board as well as storing guessed letters in an array
   function evaluateGuessedWords(keypad_key) {
-    var guessedWordArr = getCurrentGuessedWords();
+    let guessedWordArr = getCurrentGuessedWords();
 
     if (guessedWordArr && guessedWordArr.length < 5) {
       guessedWordArr.push(keypad_key);
 
       // Determines the space for the letter to go in the array and board
-      var freeSpaceID = document.getElementById(String(freeSpace));
+      let freeSpaceID = document.getElementById(String(freeSpace));
       // Increase counter as output letters increase
       freeSpace += 1;
 
@@ -84,10 +83,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   // Changing square color green, orange, gray.
   function getSquareColor(letter, index) {
-    var correctLetter = word.includes(letter);
+    let correctLetter = word.includes(letter);
 
-    var letterIndex = word.charAt(index);
-    var correctPosition = (letter === letterIndex);
+    let letterIndex = word.charAt(index);
+    let correctPosition = (letter === letterIndex);
     //Incorrect letter color gray
     if (!correctLetter) {
       return "rgb(180, 180, 180)";
@@ -100,27 +99,35 @@ document.addEventListener("DOMContentLoaded", () => {
     return "rgb(255, 209, 102)";
   }
 
+  function delay(ms) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(2);
+      }, ms);
+    });
+  }
+
   // This is what happens when a user hits the enter key
-  function evaluateEnteredWord() {
-    var currentguessedWordArr = getCurrentGuessedWords();
+  async function evaluateEnteredWord() {
+    let currentguessedWordArr = getCurrentGuessedWords();
     // Alert if word less than 5
     if (currentguessedWordArr.length !== 5) {
       window.alert("Word Must be 5 Letters");
     }
     else {
-      var currentGuesses = currentguessedWordArr.join("");
+      let currentGuesses = currentguessedWordArr.join("");
 
       //Changing square colors using getBoxColor function
-      var firstLetterId = guessedWordCount * 5 + 1;
-      var interval = 200;
-      currentguessedWordArr.forEach((letter, index) => {
-        setTimeout(() => {
-          var squareColor = getSquareColor(letter, index);
-          var letterId = firstLetterId + index;
-          var letterEl = document.getElementById(letterId);
-          letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
-        }, interval * index);
-      });
+      let firstLetterId = guessedWordCount * 5 + 1;
+      for (let index = 0; index < currentguessedWordArr.length; index++) {
+        let letter = currentguessedWordArr[index];
+        let squareColor = getSquareColor(letter, index);
+        let letterId = firstLetterId + index;
+        let letterEl = document.getElementById(letterId);
+        letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
+        await delay(200)
+      }
+
 
       guessedWordCount += 1;
 
@@ -139,12 +146,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // This is what happens when a user hits the delete key
   function evaluateDeletedLetter() {
-    var currentGuesses = getCurrentGuessedWords();
-    var delLetter = currentGuesses.pop();
+    let currentGuesses = getCurrentGuessedWords();
+    let delLetter = currentGuesses.pop();
 
     guessedWords[guessedWords.length - 1] = currentGuesses;
 
-    var freeSpaceID = document.getElementById(String(freeSpace - 1));
+    let freeSpaceID = document.getElementById(String(freeSpace - 1));
 
     freeSpaceID.textContent = '';
     freeSpace = freeSpace - 1;
@@ -152,14 +159,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // THIS is what happens when a user hits a key on the keyboard
-  // This variable pulls the data from the HTML keyboard
-  var keypad_keys = document.querySelectorAll(".keypad-row button");
+  // This letiable pulls the data from the HTML keyboard
+  let keypad_keys = document.querySelectorAll(".keypad-row button");
 
   // This loop handles what happens when a button is clicked
   for (let i = 0; i < keypad_keys.length; i++) {
     // When the key is clicked, it pulls the data (i.e. the letter)
     keypad_keys[i].onclick = ({ target }) => {
-      var keypad_key = target.getAttribute("data-key");
+      let keypad_key = target.getAttribute("data-key");
 
       // When they hit enter
       if (keypad_key === 'enter') {
