@@ -113,8 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Alert if word less than 5
     if (currentguessedWordArr.length !== 5) {
       window.alert("Word Must be 5 Letters");
-    }
-    else {
+    } else {
       let currentGuesses = currentguessedWordArr.join("");
 
       //Changing square colors using getBoxColor function
@@ -147,15 +146,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // This is what happens when a user hits the delete key
   function evaluateDeletedLetter() {
     let currentGuesses = getCurrentGuessedWords();
-    let delLetter = currentGuesses.pop();
+    if (currentGuesses.length - 1 >= 0) {
+      let delLetter = currentGuesses.pop();
 
-    guessedWords[guessedWords.length - 1] = currentGuesses;
+      guessedWords[guessedWords.length - 1] = currentGuesses;
 
-    let freeSpaceID = document.getElementById(String(freeSpace - 1));
+      let freeSpaceID = document.getElementById(String(freeSpace - 1));
 
-    freeSpaceID.textContent = '';
-    freeSpace = freeSpace - 1;
-
+      freeSpaceID.textContent = '';
+      freeSpace = freeSpace - 1;
+    }
   }
 
   // THIS is what happens when a user hits a key on the keyboard
