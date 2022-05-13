@@ -31,14 +31,11 @@ const getColor = (letter, index, word) => {
 }
 
 
-// FIXME: This function contains side-effect and may effect future implementation
 // Handles the output onto the board as well as storing guessed letters in an array
 const evaluateGuessedWords = (keypadKey, guessedWords, freeSpace) => {
-  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  let currentGuess = [...getCurrentlyGuessedWord(guessedWords)];
   if (currentGuess && currentGuess.length < 5) {
-    // FIXME: SIDE EFFECT
-    // Pass by reference (refering to guessedword internal array)
-    currentGuess.push(keypadKey);
+    guessedWords[guessedWords.length - 1].push(keypadKey);
     // Determines the space for the letter to go in the array and board
     let freeSpaceIDElement = document.getElementById(String(freeSpace));
     // Increase counter as output letters increase
@@ -49,14 +46,14 @@ const evaluateGuessedWords = (keypadKey, guessedWords, freeSpace) => {
   return freeSpace
 }
 
-// FIXME: This function contains side-effect and may effect future implementation
 const evaluateDeletedLetter = (isAnimating, guessedWords, freeSpace) => {
   // Do not allow delete when the animation is being displayed (disable delete when full)
   if (isAnimating) return;
 
-  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  // Copy array to remove direct reference (thus side effect)
+  let currentGuess = [...getCurrentlyGuessedWord(guessedWords)];
   if (currentGuess.length - 1 >= 0) {
-    // FIXME: SIDE EFFECT
+
     currentGuess.pop();
 
     guessedWords[guessedWords.length - 1] = currentGuess;
@@ -70,14 +67,12 @@ const evaluateDeletedLetter = (isAnimating, guessedWords, freeSpace) => {
   return freeSpace;
 }
 
-// FIXME: This function contains side-effect and may effect future implementation
 async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCountUpdater, guessedWords, guessedWordCount) {
-  let currentGuess = getCurrentlyGuessedWord(guessedWords);
+  let currentGuess = [...getCurrentlyGuessedWord(guessedWords)];
   // Letter inputed is not upto guessing length
   if (currentGuess.length !== 5) {
     window.alert("Word Must be 5 Letters");
   } else {
-    // FIXME: SIDE EFFECT
     let currentGuesses = currentGuess.join("");
 
     //Changing square colors using getBoxColor function
@@ -106,7 +101,6 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       window.alert(`You Lose! The word for today is ${word}.`);
     }
 
-    // FIXME: SIDE EFFECT
     guessedWords.push([]);
   }
 }
@@ -127,7 +121,7 @@ const main = () => {
   drawGrid(6)
 
   const updateAnimationState = (state) => isAnimating = state
-  const incrementGuessedWordCount = () => guessedWordCount++
+  const incrementGuessedWordCount = () => guessedWordCount += 1
 
   // Get all keybords element and add event listener
   let keypadKeysElements = document.querySelectorAll(".keypad-row button");
@@ -144,7 +138,7 @@ const main = () => {
         }
 
         if (keypadKey === 'del') {
-          evaluateDeletedLetter(isAnimating, guessedWords, freeSpace);
+          freeSpace = evaluateDeletedLetter(isAnimating, guessedWords, freeSpace);
           return;
         }
         // Update guessworrds array

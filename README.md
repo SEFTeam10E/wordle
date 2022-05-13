@@ -15,6 +15,3 @@ To view code for Sprint 2, change to Sprint 2 branch.
 ## Institution
 RMIT University
 
-## To Do
-
-- Clean code side effects (caused by impure function)
