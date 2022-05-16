@@ -4,7 +4,7 @@
     Authors: Team 10E Development Team
 */
 
-import { words } from '../assets/words.js';
+import { words } from './words.js';
 
 // Draw grid as much as numOfRow
 const drawGrid = (numOfRow) => {
