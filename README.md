@@ -1,7 +1,7 @@
-# Wordle (Sprint 1)
+# Wordle (Sprint 2)
 Repository for Team10E's Wordle game for Software Engineering Fundamentals
 
-To view code for Sprint 2, change to Sprint 2 branch.
+To view code for Sprint 1, change to Sprint 1 branch.
 
 ## Team Members
 - Daniel Viglietti
