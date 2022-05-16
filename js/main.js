@@ -4,6 +4,8 @@
     Authors: Team 10E Development Team
 */
 
+import { words } from '../assets/words.js';
+
 // Draw grid as much as numOfRow
 const drawGrid = (numOfRow) => {
   let gridElement = document.querySelector("#grid")
@@ -74,40 +76,43 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
     window.alert("Word Must be 5 Letters");
   } else {
     let currentGuesses = currentGuess.join("");
+    if (!words.includes(currentGuesses)) {
+      window.alert(`Word ${currentGuesses} does not exists in the dictionary!`);
+    } else {
+      //Changing square colors using getBoxColor function
+      let firstLetterId = guessedWordCount * 5;
+      animationStateUpdater(true)
+      for (let index = 0; index < currentGuess.length; index++) {
+        let letter = currentGuess[index];
+        let squareColor = getColor(letter, index, word);
+        let letterId = firstLetterId + index;
+        let letterEl = document.getElementById(letterId);
+        letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
+        await delay(200)
+      }
+      animationStateUpdater(false)
 
-    //Changing square colors using getBoxColor function
-    let firstLetterId = guessedWordCount * 5;
-    animationStateUpdater(true)
-    for (let index = 0; index < currentGuess.length; index++) {
-      let letter = currentGuess[index];
-      let squareColor = getColor(letter, index, word);
-      let letterId = firstLetterId + index;
-      let letterEl = document.getElementById(letterId);
-      letterEl.style = `background-color:${squareColor};border-color:${squareColor}`;
-      await delay(200)
+      // guessedWordCount += 1;
+      guessedWordCountUpdater()
+
+      // Calculate time till the next wordle
+      const d = new Date();
+      d.toLocaleString('en-US', { hour12: false, });
+      let hours = 24 - d.getHours();
+      let minutes = 60 - d.getMinutes();
+
+      // Congratulation message if correct guess
+      if (currentGuesses === word) {
+        window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+        isGameEnd = true;
+      }
+      // More than 6 wrong guesses
+      else if (guessedWords.length === 6) {
+        window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+      }
+
+      guessedWords.push([]);
     }
-    animationStateUpdater(false)
-
-    // guessedWordCount += 1;
-    guessedWordCountUpdater()
-
-	// Calculate time till the next wordle
-	const d = new Date();
-		d.toLocaleString('en-US', {hour12: false,});
-		let hours = 24 - d.getHours(); 
-		let minutes = 60 - d.getMinutes();
-
-    // Congratulation message if correct guess
-    if (currentGuesses === word) {
-      window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-      isGameEnd = true;
-    }
-    // More than 6 wrong guesses
-    else if (guessedWords.length === 6) {
-      window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-    }
-
-    guessedWords.push([]);
   }
 }
 
