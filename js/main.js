@@ -91,14 +91,20 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
     // guessedWordCount += 1;
     guessedWordCountUpdater()
 
+	// Calculate time till the next wordle
+	const d = new Date();
+		d.toLocaleString('en-US', {hour12: false,});
+		let hours = 24 - d.getHours(); 
+		let minutes = 60 - d.getMinutes();
+
     // Congratulation message if correct guess
     if (currentGuesses === word) {
-      window.alert("Congratulations! You have won the wordle for today");
+      window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
       isGameEnd = true;
     }
     // More than 6 wrong guesses
     else if (guessedWords.length === 6) {
-      window.alert(`You Lose! The word for today is ${word}.`);
+      window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
     }
 
     guessedWords.push([]);
