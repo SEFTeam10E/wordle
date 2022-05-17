@@ -103,8 +103,10 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
 
       // Congratulation message if correct guess
       if (currentGuesses === word) {
-        window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
         updateGameState(true)
+        window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+        let shareData = "I successfully guessed \'" + word + "\' in " + (guessedWordCount + 1) + " attempt on wordle";
+        showShare(shareData)
       }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
@@ -114,6 +116,35 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       guessedWords.push([]);
     }
   }
+}
+
+const showShare = (data) => {
+  let fb = false
+  let tw = false
+  if (confirm("Do you want to share on Facebook?")) {
+    fb = true
+  }
+  if (confirm("Do you want to share on Twitter?")) {
+    tw = true
+  }
+
+  if (fb) shareOnFacebook(data)
+  if (tw) shareOnTwitter(data)
+}
+
+function shareOnFacebook(data) {
+  const navUrl =
+    'https://www.facebook.com/sharer/sharer.php?u=www.wordle.com' +
+    '&quote=' +
+    data;
+  window.open(navUrl, '_blank');
+}
+
+function shareOnTwitter(data) {
+  const navUrl =
+    'https://twitter.com/intent/tweet?text=' +
+    data;
+  window.open(navUrl, '_blank');
 }
 
 
