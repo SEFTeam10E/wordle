@@ -69,7 +69,7 @@ const evaluateDeletedLetter = (isAnimating, guessedWords, freeSpace) => {
   return freeSpace;
 }
 
-async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCountUpdater, guessedWords, guessedWordCount) {
+async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCountUpdater, guessedWords, guessedWordCount, updateGameState) {
   let currentGuess = [...getCurrentlyGuessedWord(guessedWords)];
   // Letter inputed is not upto guessing length
   if (currentGuess.length !== 5) {
@@ -104,7 +104,7 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       // Congratulation message if correct guess
       if (currentGuesses === word) {
         window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-        isGameEnd = true;
+        updateGameState(true)
       }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
@@ -132,6 +132,7 @@ const main = () => {
   drawGrid(6)
 
   const updateAnimationState = (state) => isAnimating = state
+  const updateGameState = (state) => isGameEnd = state
   const incrementGuessedWordCount = () => guessedWordCount += 1
 
   // Get all keybords element and add event listener
@@ -144,7 +145,7 @@ const main = () => {
         let keypadKey = target.getAttribute("data-key");
 
         if (keypadKey === 'enter') {
-          evaluateEnteredWord(word, updateAnimationState, incrementGuessedWordCount, guessedWords, guessedWordCount);
+          evaluateEnteredWord(word, updateAnimationState, incrementGuessedWordCount, guessedWords, guessedWordCount, updateGameState);
           return;
         }
 
