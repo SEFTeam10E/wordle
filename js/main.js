@@ -100,15 +100,38 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       d.toLocaleString('en-US', { hour12: false, });
       let hours = 24 - d.getHours();
       let minutes = 60 - d.getMinutes();
-
+      let streak;
       // Congratulation message if correct guess
       if (currentGuesses === word) {
         window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-        updateGameState(true)
-      }
+        updateGameState(true);
+     //     localStorage.setItem (number)+1;
+     //   localStorage.setItem (streak)+1;
+     //   localStorage.setItem (maxStreak)+1;
+     //   localStorage.setItem (percentage)+1;
+     //   window.localStorage = function()
+     //   { let statistics;
+     //     let number ;
+     //     let streak ;
+     //     let maxStreak;
+     //     let percentage;
+
+  //        document.getElementById("statistics").innerHTML = "Played: " + number +"\nWin %: " + percentage +"\nCurrent Streak: " + streak +"\nMax Streak: " + maxStreak ;
+  //      document.getElementById("numPlayed").innerHTML = "Played: " + number;
+  //      document.getElementById("winPercent").innerHTML = "Win %: " + percentage;
+  //      document.getElementById("currentStreak").innerHTML = "Current Streak: " + Streak;
+  //       document.getElementById("max").innerHTML = "Max Streak: " + maxStreak;
+  //         window.alert("Stats\n"+ numPlayed );--!>
+        }
+
+    //  }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
         window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+   //     localStorage.setItem (number)+1;
+     //   localStorage.setItem (streak = 0);
+     //   localStorage.setItem (maxStreak );
+
       }
 
       guessedWords.push([]);
