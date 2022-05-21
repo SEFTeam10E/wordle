@@ -96,11 +96,6 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       window.alert("Congratulations! You have won the wordle for today");
       isGameEnd = true;
     }
-    // More than 6 wrong guesses
-    else if (guessedWords.length === 6) {
-      window.alert(`You Lose! The word for today is ${word}.`);
-    }
-
     guessedWords.push([]);
   }
 }
