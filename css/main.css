@@ -30,7 +30,6 @@ html, body {
     background-color:white;
 }
 
-
 #game {
     width:100%;
     max-width:500px;
@@ -188,24 +187,4 @@ html, body {
 
 .stats_Title {
 	font-weight: bold;
-}
-
-/* COUNTDOWN */
-#countdown {
-  text-align: center;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-
-#countdown-title{
-  font-size: 24px;
-}
-
-#countdown-timer{
-  font-weight: bold;
-  font-size: 32px;
 }
