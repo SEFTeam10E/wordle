@@ -25,7 +25,17 @@ const getCurrentlyGuessedWord = (guessedWords) => guessedWords[guessedWords.leng
 
 const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(2), ms))
 
-const showNextWordleTime = () => {
+const getNextWordleTime = () => {
+  var today = new Date();
+  today.toLocaleString('en-US', { hour12: false, });
+  var tomorrow = new Date();
+  tomorrow.toLocaleString('en-US', { hour12: false, });
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  return tomorrow - today;
+}
+
+const showNextWordleTimeAlert = () => {
   const d = new Date();
   d.toLocaleString('en-US', { hour12: false, });
   let hours = 24 - d.getHours();
@@ -110,7 +120,7 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       if (currentGuesses === word) {
         updateGameState(true)
         setCookie("isWordleSolved", "1");
-        showNextWordleTime();
+        showNextWordleTimeAlert();
         let shareData = "I successfully guessed \'" + word + "\' in " + (guessedWordCount + 1) + " attempt on wordle";
         showShare(shareData)
 
@@ -215,11 +225,7 @@ const main = () => {
     document.getElementById("keypad-container").remove();
     setInterval(function() {
       // Time calculations for days, hours, minutes and seconds
-      var today = new Date();
-      var tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      var diffMs = (tomorrow - today); // milliseconds between now & Christmas
+      var diffMs = getNextWordleTime();
       var hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
