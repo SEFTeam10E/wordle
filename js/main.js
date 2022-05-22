@@ -175,8 +175,7 @@ const main = () => {
     let guessedWords = [[]];
     // Free space state corresponds to the grid id
     let freeSpace = 0;
-    // TODO: Change me to dynamic content in sprint 2
-    let word = "proud";
+    let word = words[Math.floor((Math.random() * words.length))];
     let guessedWordCount = 0;
     let isGameEnd = false;
     let isAnimating = false
