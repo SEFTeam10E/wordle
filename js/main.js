@@ -71,7 +71,7 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
   let currentGuess = [...getCurrentlyGuessedWord(guessedWords)];
   // Letter inputed is not upto guessing length
   if (currentGuess.length !== 5) {
-    window.alert("Word Must be 5 Letters");
+    window.alert("Word must be 5 Letters");
   } else {
     let currentGuesses = currentGuess.join("");
 
