@@ -1,9 +1,9 @@
 /*
     Main.js
-    Date: 28/04/2022
     Authors: Team 10E Development Team
 */
 
+		
 import { words } from './words.js';
 
 // Draw grid as much as numOfRow
@@ -107,41 +107,29 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
         window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
         let shareData = "I successfully guessed \'" + word + "\' in " + (guessedWordCount + 1) + " attempt on wordle";
         showShare(shareData)
+		
+		// Statistics
+		document.getElementById("stats_1").innerHTML = "1";
+		document.getElementById("stats_2").innerHTML = "100";
+		document.getElementById("stats_3").innerHTML = "1";
+		document.getElementById("stats_4").innerHTML = "1";
       }
 
-     //     localStorage.setItem (number)+1;
-     //   localStorage.setItem (streak)+1;
-     //   localStorage.setItem (maxStreak)+1;
-     //   localStorage.setItem (percentage)+1;
-     //   window.localStorage = function()
-     //   { let statistics;
-     //     let number ;
-     //     let streak ;
-     //     let maxStreak;
-     //     let percentage;
-
-  //        document.getElementById("statistics").innerHTML = "Played: " + number +"\nWin %: " + percentage +"\nCurrent Streak: " + streak +"\nMax Streak: " + maxStreak ;
-  //      document.getElementById("numPlayed").innerHTML = "Played: " + number;
-  //      document.getElementById("winPercent").innerHTML = "Win %: " + percentage;
-  //      document.getElementById("currentStreak").innerHTML = "Current Streak: " + Streak;
-  //       document.getElementById("max").innerHTML = "Max Streak: " + maxStreak;
-  //         window.alert("Stats\n"+ numPlayed );--!>
-     //   }
-
-    //  }
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
         window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-   //     localStorage.setItem (number)+1;
-     //   localStorage.setItem (streak = 0);
-     //   localStorage.setItem (maxStreak );
-
+		
+		// Statistics
+		document.getElementById("stats_1").innerHTML = "1";
+		document.getElementById("stats_2").innerHTML = "0";
+		document.getElementById("stats_3").innerHTML = "0";
+		document.getElementById("stats_4").innerHTML = "0";
       }
-
       guessedWords.push([]);
     }
   }
 }
+
 
 const showShare = (data) => {
   let fb = false
@@ -216,6 +204,7 @@ const main = () => {
   }
 
 }
+
 
 // Run function after page initialized
 document.addEventListener("DOMContentLoaded", main)
