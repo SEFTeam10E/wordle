@@ -3,8 +3,9 @@
     Authors: Team 10E Development Team
 */
 
-		
+
 import { words } from './words.js';
+import { setCookie, getCookie } from './cookie.js';
 
 // Draw grid as much as numOfRow
 const drawGrid = (numOfRow) => {
@@ -23,6 +24,14 @@ const drawGrid = (numOfRow) => {
 const getCurrentlyGuessedWord = (guessedWords) => guessedWords[guessedWords.length - 1];
 
 const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(2), ms))
+
+const showNextWordleTime = () => {
+  const d = new Date();
+  d.toLocaleString('en-US', { hour12: false, });
+  let hours = 24 - d.getHours();
+  let minutes = 60 - d.getMinutes();
+  window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+}
 
 // Get color depending on the correctness of the guess
 const getColor = (letter, index, word) => {
@@ -96,34 +105,32 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
       guessedWordCountUpdater()
 
       // Calculate time till the next wordle
-      const d = new Date();
-      d.toLocaleString('en-US', { hour12: false, });
-      let hours = 24 - d.getHours();
-      let minutes = 60 - d.getMinutes();
       let streak;
       // Congratulation message if correct guess
       if (currentGuesses === word) {
         updateGameState(true)
-        window.alert("Congratulations! You have won the wordle for today. \n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+        setCookie("isWordleSolved", "1");
+        showNextWordleTime();
         let shareData = "I successfully guessed \'" + word + "\' in " + (guessedWordCount + 1) + " attempt on wordle";
         showShare(shareData)
-		
-		// Statistics
-		document.getElementById("stats_1").innerHTML = "1";
-		document.getElementById("stats_2").innerHTML = "100";
-		document.getElementById("stats_3").innerHTML = "1";
-		document.getElementById("stats_4").innerHTML = "1";
+
+        // Statistics
+        document.getElementById("stats_1").innerHTML = "1";
+        document.getElementById("stats_2").innerHTML = "100";
+        document.getElementById("stats_3").innerHTML = "1";
+        document.getElementById("stats_4").innerHTML = "1";
       }
 
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
+        setCookie("isWordleSolved", "1");
         window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
-		
-		// Statistics
-		document.getElementById("stats_1").innerHTML = "1";
-		document.getElementById("stats_2").innerHTML = "0";
-		document.getElementById("stats_3").innerHTML = "0";
-		document.getElementById("stats_4").innerHTML = "0";
+
+        // Statistics
+        document.getElementById("stats_1").innerHTML = "1";
+        document.getElementById("stats_2").innerHTML = "0";
+        document.getElementById("stats_3").innerHTML = "0";
+        document.getElementById("stats_4").innerHTML = "0";
       }
       guessedWords.push([]);
     }
@@ -162,45 +169,79 @@ function shareOnTwitter(data) {
 
 
 const main = () => {
-  // 2D array containing all guessed word
-  let guessedWords = [[]];
-  // Free space state corresponds to the grid id
-  let freeSpace = 0;
-  // TODO: Change me to dynamic content in sprint 2
-  let word = "proud";
-  let guessedWordCount = 0;
-  let isGameEnd = false;
-  let isAnimating = false
+  // Check if user has solved the wordle of the day.
+  if (getCookie('isWordleSolved') != '1') {
+    // 2D array containing all guessed word
+    let guessedWords = [[]];
+    // Free space state corresponds to the grid id
+    let freeSpace = 0;
+    // TODO: Change me to dynamic content in sprint 2
+    let word = "proud";
+    let guessedWordCount = 0;
+    let isGameEnd = false;
+    let isAnimating = false
 
-  // Draw the grid
-  drawGrid(6)
+    // Draw the grid
+    drawGrid(6)
 
-  const updateAnimationState = (state) => isAnimating = state
-  const updateGameState = (state) => isGameEnd = state
-  const incrementGuessedWordCount = () => guessedWordCount += 1
+    const updateAnimationState = (state) => isAnimating = state
+    const updateGameState = (state) => isGameEnd = state
+    const incrementGuessedWordCount = () => guessedWordCount += 1
 
-  // Get all keybords element and add event listener
-  let keypadKeysElements = document.querySelectorAll(".keypad-row button");
+    // Get all keybords element and add event listener
+    let keypadKeysElements = document.querySelectorAll(".keypad-row button");
 
-  for (const keypadKeyElementInstance of keypadKeysElements) {
-    // Get the clicked key and destructure the target (the letter pressed)
-    keypadKeyElementInstance.onclick = ({ target }) => {
-      if (!isGameEnd) {
-        let keypadKey = target.getAttribute("data-key");
+    for (const keypadKeyElementInstance of keypadKeysElements) {
+      // Get the clicked key and destructure the target (the letter pressed)
+      keypadKeyElementInstance.onclick = ({ target }) => {
+        if (!isGameEnd) {
+          let keypadKey = target.getAttribute("data-key");
 
-        if (keypadKey === 'enter') {
-          evaluateEnteredWord(word, updateAnimationState, incrementGuessedWordCount, guessedWords, guessedWordCount, updateGameState);
-          return;
+          if (keypadKey === 'enter') {
+            evaluateEnteredWord(word, updateAnimationState, incrementGuessedWordCount, guessedWords, guessedWordCount, updateGameState);
+            return;
+          }
+
+          if (keypadKey === 'del') {
+            freeSpace = evaluateDeletedLetter(isAnimating, guessedWords, freeSpace);
+            return;
+          }
+          // Update guessworrds array
+          freeSpace = evaluateGuessedWords(keypadKey, guessedWords, freeSpace);
         }
-
-        if (keypadKey === 'del') {
-          freeSpace = evaluateDeletedLetter(isAnimating, guessedWords, freeSpace);
-          return;
-        }
-        // Update guessworrds array
-        freeSpace = evaluateGuessedWords(keypadKey, guessedWords, freeSpace);
       }
     }
+  } else {
+    document.getElementById("grid-container").remove();
+    document.getElementById("keypad-container").remove();
+    setInterval(function() {
+      // Time calculations for days, hours, minutes and seconds
+      var today = new Date();
+      var tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      var diffMs = (tomorrow - today); // milliseconds between now & Christmas
+      var hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      var formatter = (val) => {
+        if (val < 10) {
+          return `0${val}`;
+        } else {
+          return val;
+        }
+      }
+
+      // If the count down is finished, write some text
+      if (diffMs < 0) {
+        clearInterval(x);
+        document.getElementById("countdown-timer").innerHTML = 'Please refresh the website!';
+      } else {
+        document.getElementById("countdown-title").innerHTML = 'Next wordle in:';
+        document.getElementById("countdown-timer").innerHTML = `${formatter(hours)}:${formatter(minutes)}:${formatter(seconds)}`;
+      }
+    }, 1000);
   }
 
 }
