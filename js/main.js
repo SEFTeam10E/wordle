@@ -117,7 +117,7 @@ async function evaluateEnteredWord(word, animationStateUpdater, guessedWordCount
 
       // More than 6 wrong guesses
       else if (guessedWords.length === 6) {
-        window.alert("You Lose! The word for today is ${word}.\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
+        window.alert("You Lose! The word for today is " + word + ".\n \n Time till next wordle: \n " + hours + " hours and " + minutes + " minutes");
 		
 		// Statistics
 		document.getElementById("stats_1").innerHTML = "1";
